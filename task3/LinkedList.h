@@ -17,7 +17,6 @@ public:
     ~LinkedList() {
         clear();
     }
-
     void push_back(const T& value) {
         Node<T>* newNode = new Node<T>{ value, nullptr, nullptr };
         if (empty()) {
@@ -38,17 +37,17 @@ public:
         if (empty()) {
             throw std::out_of_range("List is empty");
         }
-        if (head->next == nullptr) {
+        if (count == 1) { // If there's only one node in the list
             delete head;
             head = nullptr;
         }
         else {
             Node<T>* temp = head;
-            while (temp->next != nullptr) {
+            while (temp->next->next != nullptr) {
                 temp = temp->next;
             }
-            temp->prev->next = nullptr;
-            delete temp;
+            delete temp->next;
+            temp->next = nullptr;
         }
         count--;
     }
@@ -94,13 +93,28 @@ public:
     }
 
     void display() const {
-        Node<T>* temp = head;
-        while (temp != nullptr) {
-            std::cout << temp->data << " ";
-            temp = temp->next;
+        Node<T>* current = head;
+        while (current != nullptr) {
+            std::cout << current->data << " ";
+            current = current->next;
         }
         std::cout << std::endl;
     }
+
+
+    T& get(size_t index) {
+        if (index >= count) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        Node<T>* temp = head;
+        for (size_t i = 0; i < index; ++i) {
+            temp = temp->next;
+        }
+
+        return temp->data;
+    }
+
 
 private:
     Node<T>* head;

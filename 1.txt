@@ -1,0 +1,136 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <cassert>
+#include "LinkedList.h"
+#include "Tests.h"
+
+void runTests() {
+    testIntegerLinkedList();
+    testStringLinkedList();
+    testDisplay();
+    testStringLinkedList();
+    testElementExtraction();
+    testElementRemoval();
+    testClear();
+    testCombination();
+    testEdgeCases();
+
+    std::cout << "All tests passed successfully!" << std::endl;
+}
+
+class Point {
+public:
+    Point() : x(0), y(0) {} // Конструктор по умолчанию
+    Point(int x_val, int y_val) : x(x_val), y(y_val) {}
+    int getX() const { return x; }
+    int getY() const { return y; }
+    void display() const { std::cout << "(" << x << ", " << y << ")"; }
+
+    // Оператор для ввода объекта типа Point из потока
+    friend std::istream& operator>>(std::istream& in, Point& point) {
+        in >> point.x >> point.y;
+        return in;
+    }
+
+private:
+    int x;
+    int y;
+};
+
+std::ostream& operator<<(std::ostream& out, const Point& point) {
+    out << "(" << point.getX() << ", " << point.getY() << ")";
+    return out;
+}
+
+template<typename T>
+void createList(std::vector<LinkedList<T>>& lists) {
+    LinkedList<T> newList;
+
+    // Считываем строку ввода
+    std::string input;
+    std::cout << "Enter elements separated by spaces: ";
+    std::getline(std::cin >> std::ws, input);
+
+    // Создаем потоковый ввод для строки
+    std::istringstream iss(input);
+    T value;
+    while (iss >> value) { // Считываем значения из строки и добавляем их в список
+        newList.push_back(value);
+    }
+
+    // Добавляем созданный список в вектор списков
+    lists.push_back(newList);
+}
+
+template<typename T>
+void addElementToEnd(std::vector<LinkedList<T>>& lists) {
+    if (lists.empty()) {
+        std::cout << "No lists created yet. Please create a list first.\n";
+        return;
+    }
+
+    size_t listIndex;
+    std::cout << "Choose a list to add the element to (0-" << lists.size() - 1 << "): ";
+    std::cin >> listIndex;
+
+    if (listIndex >= lists.size()) {
+        std::cout << "Invalid list index.\n";
+        return;
+    }
+
+    T value;
+    std::cout << "Enter the element to add: ";
+    std::cin >> value;
+
+    lists[listIndex].push_back(value);
+    std::cout << "Element added to the end of the list.\n";
+}
+
+
+
+int main() {
+    char choice;
+    std::vector<LinkedList<int>> intLists;
+    std::vector<LinkedList<std::string>> stringLists;
+    std::vector<LinkedList<Point>> pointLists;
+
+    do {
+        std::cout << "Choose an action:\n";
+        std::cout << "1. Run tests\n";
+        std::cout << "2. Create a list of integers\n";
+        std::cout << "3. Create a list of strings\n";
+        std::cout << "4. Create a list of points\n";
+        std::cout << "5. Append an element to a list\n";
+        std::cout << "6. Exit\n";
+        std::cin >> choice;
+
+        switch (choice) {
+        case '1':
+            runTests();
+            break;
+        case '2':
+            createList(intLists);
+            break;
+        case '3':
+            createList(stringLists);
+            break;
+        case '4':
+            createList(pointLists);
+            break;
+        case '5':
+            addElementToEnd(intLists);
+            break;
+
+
+        case '6':
+            std::cout << "Exiting...\n";
+            break;
+        default:
+            std::cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != '6');
+
+    return 0;
+}
